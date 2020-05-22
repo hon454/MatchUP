@@ -16,6 +16,7 @@ public class Post {
     public String uid;
     public String author;
     public String title;
+    public String subject;
     public Long createdDateTime;
     public Long dueDateTime;
 
@@ -33,12 +34,13 @@ public class Post {
     public Post() {
     }
 
-    public Post(String uid, String author, String title, String leftModifier, String leftTitle, String rightModifier, String rightTitle) {
+    public Post(String uid, String author, String title, String leftModifier, String leftTitle, String rightModifier, String rightTitle, String subject) {
         createdDateTime = System.currentTimeMillis();
 
         this.uid = uid;
         this.author = author;
         this.title = title;
+        this.subject = subject;
         this.leftModifier = leftModifier;
         this.leftTitle = leftTitle;
         this.rightModifier = rightModifier;
@@ -52,6 +54,7 @@ public class Post {
         result.put("uid", uid);
         result.put("author", author);
         result.put("title", title);
+        result.put("subject", subject);
         result.put("createdDateTime", createdDateTime);
         result.put("leftModifier", leftModifier);
         result.put("leftTitle", leftTitle);

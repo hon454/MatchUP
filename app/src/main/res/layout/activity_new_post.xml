@@ -60,45 +60,71 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/linearLayout_post_subject"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
-
-    <EditText
-        android:id="@+id/et_title"
-        android:layout_width="349dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="29dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="33dp"
-        android:layout_marginBottom="10dp"
-        android:ems="10"
-        android:hint="제목"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/et_leftOptionModifier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail" />
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout2"
+        android:gravity="center_vertical">
 
-    <ImageButton
+        <TextView
+            android:id="@+id/tv_postSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="게시판"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout2" />
+
+        <Spinner
+            android:id="@+id/spinner_post_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:entries="@array/postSubject"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_post_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_post_subject">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="제목"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout2" />
+
+        <EditText
+            android:id="@+id/et_title"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="게시글 제목을 입력하세요."
+            android:layout_marginStart="20dp"/>
+    </LinearLayout>
+
+
+    <ImageView
         android:id="@+id/imageButton_thumbnail"
         android:layout_width="0dp"
         android:layout_height="270dp"
         android:layout_marginTop="20dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/et_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_post_title"
         app:srcCompat="@drawable/default_profile" />
 
     <EditText
@@ -113,7 +139,7 @@
         app:layout_constraintBottom_toTopOf="@+id/et_leftOptionTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_title" />
+        app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail" />
 
     <EditText
         android:id="@+id/et_leftOptionTitle"
@@ -157,36 +183,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_rightOptionModifier" />
 
-    <Button
-        android:id="@+id/btn_back"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="25dp"
-        android:background="@color/primary"
-        android:text="뒤로가기"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_submit"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_rightOptionTitle" />
-
-    <Button
-        android:id="@+id/btn_submit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="50dp"
-        android:background="@color/primary"
-        android:text="게시"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_back"
-        app:layout_constraintTop_toBottomOf="@+id/et_rightOptionTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

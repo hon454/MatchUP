@@ -59,7 +59,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return "시사·이슈";
             case 1:
-                return "연애";
+                return "연예";
             case 2:
                 return "스포츠";
             case 3:

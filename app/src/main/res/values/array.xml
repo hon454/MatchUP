@@ -35,4 +35,13 @@
         <item>충청남도</item>
         <item>충청북도</item>
     </string-array>
+
+    <string-array name="postSubject">
+        <item>시사·이슈</item>
+        <item>연예</item>
+        <item>스포츠</item>
+        <item>푸드</item>
+        <item>영화</item>
+        <item>기타</item>
+    </string-array>
 </resources>

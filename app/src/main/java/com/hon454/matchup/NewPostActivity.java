@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class NewPostActivity extends AppCompatActivity {
     private Button mSubmitButton;
     private Button mBackButton;
 
-    private ImageButton mThumbnailImageButton;
+    private ImageView mThumbnailImageButton;
     private Uri thumbnailUri;
 
     private ImageView iv_newPost_to_main;
@@ -97,7 +98,7 @@ public class NewPostActivity extends AppCompatActivity {
                 submitPost();
             }
         });
-
+/*
         mBackButton = findViewById(R.id.btn_back);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,8 +119,9 @@ public class NewPostActivity extends AppCompatActivity {
                 submitPost();
             }
         });
+ */
 
-        mThumbnailImageButton = (ImageButton)findViewById(R.id.imageButton_thumbnail);
+        mThumbnailImageButton = (ImageView) findViewById(R.id.imageButton_thumbnail);
         mThumbnailImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,6 +153,8 @@ public class NewPostActivity extends AppCompatActivity {
         final String leftOptionTitle = mLeftOptionTitleField.getText().toString();
         final String rightOptionModifier = mRightOptionModifierField.getText().toString();
         final String rightOptionTitle = mRightOptionTitleField.getText().toString();
+        Spinner spPostSubject = (Spinner)findViewById(R.id.spinner_post_subject);
+        final String postSubject = (String)spPostSubject.getSelectedItem();
 
         if(thumbnailUri == null) {
             Toast.makeText(NewPostActivity.this, "썸네일 이미지를 선택하세요.", Toast.LENGTH_SHORT).show();
@@ -199,7 +203,8 @@ public class NewPostActivity extends AppCompatActivity {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            writeNewPost(userId, user.nickname, title, thumbnailUri, leftOptionModifier, leftOptionTitle, rightOptionModifier, rightOptionTitle);
+                            writeNewPost(userId, user.nickname, title, thumbnailUri, leftOptionModifier,
+                                    leftOptionTitle, rightOptionModifier, rightOptionTitle, postSubject);
                         }
 
                         setEditingEnabled(true);
@@ -224,7 +229,8 @@ public class NewPostActivity extends AppCompatActivity {
         isPosting = !enabled;
     }
 
-    private void writeNewPost(String userId, String username, String title, Uri thumbnailUri, String leftOptionModifier, String leftOptionTitle, String rightOptionModifier, String rightOptionTitle) {
+    private void writeNewPost(String userId, String username, String title, Uri thumbnailUri, String leftOptionModifier,
+                              String leftOptionTitle, String rightOptionModifier, String rightOptionTitle, String subject) {
         String key = mDatabase.child("posts").push().getKey();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         String filename = key + ".png";
@@ -245,7 +251,7 @@ public class NewPostActivity extends AppCompatActivity {
         ArrayList<String> temp = new ArrayList<>();
 
         // 이후 변경 필요
-        Post post = new Post(userId, username, title, leftOptionModifier, leftOptionTitle, rightOptionModifier, rightOptionTitle);
+        Post post = new Post(userId, username, title, leftOptionModifier, leftOptionTitle, rightOptionModifier, rightOptionTitle, subject);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
