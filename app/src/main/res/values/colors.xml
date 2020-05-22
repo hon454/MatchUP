@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#334995</color>
+    <color name="subBlue">#6495ED</color>
+    <color name="secondary">#F9AA33</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="pros">#F14B4B</color>
+    <color name="cons">#315EC3</color>
+</resources>

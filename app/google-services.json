@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "412008345577",
+    "firebase_url": "https://matchup-7ce60.firebaseio.com",
+    "project_id": "matchup-7ce60",
+    "storage_bucket": "matchup-7ce60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412008345577:android:33bd278af529e266602578",
+        "android_client_info": {
+          "package_name": "com.hon454.matchup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412008345577-tsjhid0tr4ogja4e1nif69r7p73q7ma3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hon454.matchup",
+            "certificate_hash": "0ee36aba051321a66fd299a539c49fe08783cb14"
+          }
+        },
+        {
+          "client_id": "412008345577-cocin634hf43ev7p9dq27n4pp59mbqak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiIcLWzJMYir3RzMG3J98LJylk5KOoXY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412008345577-cocin634hf43ev7p9dq27n4pp59mbqak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
