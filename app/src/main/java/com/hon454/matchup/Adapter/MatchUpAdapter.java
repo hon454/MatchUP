@@ -45,7 +45,7 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
 
 
         Glide.with(holder.itemView)
-                .load(postList.get(position).getUrl())
+                .load(postList.get(position).getThumbnailDownloadUrl())
                 .centerCrop()
                 .into(holder.iv_Post);
         holder.tv_postTitle.setText(postList.get(position).getTitle());

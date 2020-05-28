@@ -206,11 +206,11 @@ public class NewPostActivity extends AppCompatActivity {
         isPosting = !enabled;
     }
 
-    private void writeNewPost(final String userId, final String username, final String title, Uri thumbnailUri, final String leftOptionModifier,
+    private void writeNewPost(final String authorUid, final String authorName, final String title, Uri thumbnailUri, final String leftOptionModifier,
                               final String leftOptionTitle, final String rightOptionModifier, final String rightOptionTitle, final String subject) {
-        final String key = mDatabase.child("posts").push().getKey();
+        final String postUid = mDatabase.child("posts").push().getKey();
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        String filename = key + ".png";
+        String filename = postUid + ".png";
 
 
         // Save post thumbnail to Storage
@@ -229,15 +229,15 @@ public class NewPostActivity extends AppCompatActivity {
                     }
                 });
 
-        storageRef.child("images/thumbnail/" + filename).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Post post = new Post(uri.toString(), userId, username, title, leftOptionModifier,
-                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject);
+                Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
+                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, uri.toString());
                 Map<String, Object> postValues = post.toMap();
                 Map<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("/posts/" + key, postValues);
-                childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+                childUpdates.put("/posts/" + postUid, postValues);
+                childUpdates.put("/user-posts/" + authorUid + "/" + postUid, postValues);
                 mDatabase.updateChildren(childUpdates);
 
             }
@@ -247,8 +247,6 @@ public class NewPostActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
 //    Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.basic_right_eye);  // first image

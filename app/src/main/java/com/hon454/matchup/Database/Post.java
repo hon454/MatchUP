@@ -14,13 +14,15 @@ import java.util.UUID;
 
 public class Post {
 
-    private String url;
     public String uid;
-    public String author;
+    public String authorUid;
+    public String authorName;
     public String title;
     public String subject;
     public Long createdDateTime;
     public Long dueDateTime;
+
+    public String thumbnailDownloadUrl;
 
     public String leftModifier;
     public String leftTitle;
@@ -36,15 +38,16 @@ public class Post {
     public Post() {
     }
 
-    public Post(String url, String uid, String author, String title, String leftModifier, String leftTitle,
-                String rightModifier,String rightTitle, String subject) {
+    public Post(String uid, String authorUid, String authorName, String title, String leftModifier, String leftTitle,
+                String rightModifier, String rightTitle, String subject, String thumbnailDownloadUrl) {
         createdDateTime = System.currentTimeMillis();
 
-        this.url = url;
         this.uid = uid;
-        this.author = author;
+        this.authorUid = authorUid;
+        this.authorName = authorName;
         this.title = title;
         this.subject = subject;
+        this.thumbnailDownloadUrl = thumbnailDownloadUrl;
         this.leftModifier = leftModifier;
         this.leftTitle = leftTitle;
         this.rightModifier = rightModifier;
@@ -55,12 +58,13 @@ public class Post {
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("url", url);
         result.put("uid", uid);
-        result.put("author", author);
+        result.put("authorUid", authorUid);
+        result.put("authorName", authorName);
         result.put("title", title);
         result.put("subject", subject);
         result.put("createdDateTime", createdDateTime);
+        result.put("thumbnailDownloadUrl", thumbnailDownloadUrl);
         result.put("leftModifier", leftModifier);
         result.put("leftTitle", leftTitle);
         result.put("rightModifier", rightModifier);
@@ -71,7 +75,9 @@ public class Post {
         return result;
     }
 
-    public String getUrl() { return url; }
+    public String getThumbnailDownloadUrl() {
+        return thumbnailDownloadUrl;
+    }
 
     public String getTitle() {
         return title;
