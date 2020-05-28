@@ -67,7 +67,7 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
-                mAuthorView.setText(post.author);
+                mAuthorView.setText(post.authorName);
                 mTitleView.setText(post.title);
             }
 
