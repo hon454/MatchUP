@@ -214,13 +214,29 @@ public class NewPostActivity extends AppCompatActivity {
 
 
         // Save post thumbnail to Storage
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
 
-        storageRef.putFile(thumbnailUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        storageRef.putFile(thumbnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
+                                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, uri.toString());
+                                Map<String, Object> postValues = post.toMap();
+                                Map<String, Object> childUpdates = new HashMap<>();
+                                childUpdates.put("/posts/" + postUid, postValues);
+                                childUpdates.put("/user-posts/" + authorUid + "/" + postUid, postValues);
+                                mDatabase.updateChildren(childUpdates);
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -228,25 +244,6 @@ public class NewPostActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
-
-        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
-                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, uri.toString());
-                Map<String, Object> postValues = post.toMap();
-                Map<String, Object> childUpdates = new HashMap<>();
-                childUpdates.put("/posts/" + postUid, postValues);
-                childUpdates.put("/user-posts/" + authorUid + "/" + postUid, postValues);
-                mDatabase.updateChildren(childUpdates);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
     }
 
 //    Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.basic_right_eye);  // first image
