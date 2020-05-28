@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Post {
+
+    private String url;
     public String uid;
     public String author;
     public String title;
@@ -34,9 +36,11 @@ public class Post {
     public Post() {
     }
 
-    public Post(String uid, String author, String title, String leftModifier, String leftTitle, String rightModifier, String rightTitle, String subject) {
+    public Post(String url, String uid, String author, String title, String leftModifier, String leftTitle,
+                String rightModifier,String rightTitle, String subject) {
         createdDateTime = System.currentTimeMillis();
 
+        this.url = url;
         this.uid = uid;
         this.author = author;
         this.title = title;
@@ -51,6 +55,7 @@ public class Post {
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("url", url);
         result.put("uid", uid);
         result.put("author", author);
         result.put("title", title);
@@ -64,5 +69,19 @@ public class Post {
         result.put("rightVoterUidList", rightVoterUidList);
 
         return result;
+    }
+
+    public String getUrl() { return url; }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getLeftTitle() {
+        return leftTitle;
+    }
+
+    public String getRightTitle() {
+        return rightTitle;
     }
 }

@@ -53,8 +53,6 @@ public class NewPostActivity extends AppCompatActivity {
     private EditText mRightOptionModifierField;
     private EditText mRightOptionTitleField;
 
-    private Button mSubmitButton;
-    private Button mBackButton;
 
     private ImageView mThumbnailImageButton;
     private Uri thumbnailUri;
@@ -98,29 +96,8 @@ public class NewPostActivity extends AppCompatActivity {
                 submitPost();
             }
         });
-/*
-        mBackButton = findViewById(R.id.btn_back);
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
-        mSubmitButton = findViewById(R.id.btn_submit);
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isPosting)
-                {
-                    return;
-                }
-
-                submitPost();
-            }
-        });
- */
-
+        //썸네일 이미지 선택하기
         mThumbnailImageButton = (ImageView) findViewById(R.id.imageButton_thumbnail);
         mThumbnailImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,17 +206,21 @@ public class NewPostActivity extends AppCompatActivity {
         isPosting = !enabled;
     }
 
-    private void writeNewPost(String userId, String username, String title, Uri thumbnailUri, String leftOptionModifier,
-                              String leftOptionTitle, String rightOptionModifier, String rightOptionTitle, String subject) {
-        String key = mDatabase.child("posts").push().getKey();
+    private void writeNewPost(final String userId, final String username, final String title, Uri thumbnailUri, final String leftOptionModifier,
+                              final String leftOptionTitle, final String rightOptionModifier, final String rightOptionTitle, final String subject) {
+        final String key = mDatabase.child("posts").push().getKey();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         String filename = key + ".png";
 
+
+        // Save post thumbnail to Storage
         StorageReference storageRef = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
+
         storageRef.putFile(thumbnailUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -248,17 +229,26 @@ public class NewPostActivity extends AppCompatActivity {
                     }
                 });
 
-        ArrayList<String> temp = new ArrayList<>();
+        storageRef.child("images/thumbnail/" + filename).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Post post = new Post(uri.toString(), userId, username, title, leftOptionModifier,
+                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject);
+                Map<String, Object> postValues = post.toMap();
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("/posts/" + key, postValues);
+                childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+                mDatabase.updateChildren(childUpdates);
 
-        // 이후 변경 필요
-        Post post = new Post(userId, username, title, leftOptionModifier, leftOptionTitle, rightOptionModifier, rightOptionTitle, subject);
-        Map<String, Object> postValues = post.toMap();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+            }
+        });
 
-        mDatabase.updateChildren(childUpdates);
+
     }
 
 //    Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.basic_right_eye);  // first image
