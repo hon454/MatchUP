@@ -214,6 +214,40 @@
                     android:textSize="24sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/commentForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/postTextLayout"
+                android:layout_marginTop="20dp"
+                android:weightSum="1.0">
+
+                <EditText
+                    android:id="@+id/fieldCommentText"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:hint="댓글은 1자~600자 까지 작성가능합니다."/>
+
+                <Button
+                    android:id="@+id/buttonPostComment"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.2"
+                    android:layout_height="wrap_content"
+                    android:text="댓글작성"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerPostComments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/commentForm"
+                tools:listitem="@layout/item_comment" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
