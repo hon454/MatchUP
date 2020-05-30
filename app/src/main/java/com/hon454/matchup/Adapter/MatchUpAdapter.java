@@ -19,7 +19,6 @@ import com.hon454.matchup.R;
 import java.util.ArrayList;
 
 public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHolder> {
-
     private ArrayList<Post> postList;
     private Context context;
 
@@ -38,7 +37,7 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MatchUpAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MatchUpAdapter.ViewHolder viewHolder, int position) {
         // Glide는 이미지 크기가 무거울때 알아서 잘 조절해서 업로드해줍니다!
         ArrayList<String> urlList = new ArrayList<>();
         for(Post post : postList) {
@@ -46,7 +45,7 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
         }
 
         final String postKey = postList.get(position).uid;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Launch PostDetailActivity
@@ -57,13 +56,13 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
         });
 
 
-        Glide.with(holder.itemView)
+        Glide.with(viewHolder.itemView)
                 .load(postList.get(position).getThumbnailDownloadUrl())
                 .centerCrop()
-                .into(holder.iv_Post);
-        holder.tv_postTitle.setText(postList.get(position).getTitle());
-        holder.tv_leftTitle.setText(postList.get(position).getLeftTitle());
-        holder.tv_rightTitle.setText(postList.get(position).getRightTitle());
+                .into(viewHolder.iv_Post);
+        viewHolder.tv_postTitle.setText(postList.get(position).getTitle());
+        viewHolder.tv_leftTitle.setText(postList.get(position).getLeftTitle());
+        viewHolder.tv_rightTitle.setText(postList.get(position).getRightTitle());
     }
 
     @Override
