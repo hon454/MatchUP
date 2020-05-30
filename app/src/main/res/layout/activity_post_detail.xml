@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/app_bar"
@@ -226,10 +227,11 @@
                 <EditText
                     android:id="@+id/fieldCommentText"
                     android:layout_width="0dp"
-                    android:layout_weight="0.8"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:hint="댓글은 1자~600자 까지 작성가능합니다."/>
+                    android:layout_weight="0.8"
+                    android:focusable="true"
+                    android:hint="댓글은 1자~600자 까지 작성가능합니다."
+                    android:maxLines="1" />
 
                 <Button
                     android:id="@+id/buttonPostComment"
