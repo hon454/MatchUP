@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         //회원탈퇴 버튼 구현
         mAuth = FirebaseAuth.getInstance();
         TextView tv_deleteID = (TextView)findViewById(R.id.tv_deleteID);
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         //Floating Action Button 구현
         FloatingActionButton fab =findViewById(R.id.floating_button);
         fab.setOnClickListener(new FABClickListener());
-
     }
 
     //Floating Action Button 클릭 이벤트 처리
@@ -141,6 +139,4 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 }

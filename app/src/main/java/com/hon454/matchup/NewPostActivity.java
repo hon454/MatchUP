@@ -214,10 +214,10 @@ public class NewPostActivity extends AppCompatActivity {
         String filename = postUid + ".png";
 
 
-        final StorageReference storageRef = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
+        final StorageReference storageReference = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
 
         // 썸네일 업로드
-        storageRef.putFile(thumbnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        storageReference.putFile(thumbnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // 원격 저장소의 썸네일 다운로드 URL 가져오기
@@ -225,7 +225,7 @@ public class NewPostActivity extends AppCompatActivity {
                         Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
                                 leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, null);
 
-                        UploadPost(storageRef, post);
+                        UploadPost(storageReference, post);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

@@ -104,7 +104,7 @@
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/postPhoto"
+                android:id="@+id/postThumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
@@ -190,7 +190,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/buttonVoteLeft"
+                    android:id="@+id/leftVoteButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="10dp"
@@ -202,7 +202,7 @@
                     android:textSize="24sp" />
 
                 <Button
-                    android:id="@+id/buttonVoteRight"
+                    android:id="@+id/rightVoteButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="10dp"

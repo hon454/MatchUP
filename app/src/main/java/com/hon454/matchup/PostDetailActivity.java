@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +23,6 @@ import com.hon454.matchup.Database.Post;
 
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
-
     public static final String EXTRA_POST_KEY = "post_key";
 
     private DatabaseReference mPostReference;
@@ -29,8 +31,22 @@ public class PostDetailActivity extends AppCompatActivity {
     private String mPostKey;
 //    private CommentAdapter mAdapter;
 
-    private TextView mAuthorView;
     private TextView mTitleView;
+    private TextView mAuthorView;
+    private TextView mCountdownView;
+
+    private ImageView mThumbnailView;
+
+    private TextView mLeftOptionModifierView;
+    private TextView mLeftOptionTitleView;
+    private TextView mLeftOptionPercentageView;
+    private Button mLeftVoteButton;
+
+    private TextView mRightOptionModifierView;
+    private TextView mRightOptionTitleView;
+    private TextView mRightOptionPercentageView;
+    private Button mRightVoteButton;
+
 //    private EditText mCommentField;
 //    private Button mCommentButton;
 //    private RecyclerView mCommentsRecycler;
@@ -46,11 +62,28 @@ public class PostDetailActivity extends AppCompatActivity {
             throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
         }
 
+
+        // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
         mCommentsReference = FirebaseDatabase.getInstance().getReference().child("post-comments").child(mPostKey);
 
+        // Initialize View
         mAuthorView = findViewById(R.id.postAuthor);
         mTitleView = findViewById(R.id.postTitle);
+        mCountdownView = findViewById(R.id.postCountdown);
+
+        mThumbnailView = findViewById(R.id.postThumbnail);
+
+        mLeftOptionModifierView  = findViewById(R.id.postLeftOptionModifier);
+        mLeftOptionTitleView = findViewById(R.id.postLeftOptionTitle);
+        mLeftOptionPercentageView = findViewById(R.id.postLeftOptionPercentage);
+        mLeftVoteButton = findViewById(R.id.leftVoteButton);
+
+        mRightOptionModifierView = findViewById(R.id.postRightOptionModifier);
+        mRightOptionTitleView = findViewById(R.id.postRightOptionTitle);
+        mRightOptionPercentageView = findViewById(R.id.postRightOptionPercentage);
+        mRightVoteButton = findViewById(R.id.rightVoteButton);
+
 //        mCommentField = findViewById(R.id.fieldCommentText);
 //        mCommentButton = findViewById(R.id.buttonPostComment);
 //        mCommentsRecycler = findViewById(R.id.recyclerPostComments);
@@ -67,8 +100,20 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
+
                 mAuthorView.setText(post.authorName);
                 mTitleView.setText(post.title);
+//                mCountdownView.setText();
+
+                LoadThumbnailWithGlide(post.thumbnailDownloadUrl);
+
+                mLeftOptionModifierView.setText(post.leftModifier);
+                mLeftOptionTitleView.setText(post.leftTitle);
+//                mLeftOptionPercentageView.setText();
+
+                mRightOptionModifierView.setText(post.rightModifier);
+                mRightOptionTitleView.setText(post.rightTitle);
+//                mRightOptionPercentageView.setText();
             }
 
             @Override
@@ -96,5 +141,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // Clean up comments listener
 //        mAdapter.cleanupListener();
+    }
+
+    private void LoadThumbnailWithGlide(String thumbnailDownloadUrl) {
+        Glide.with(this)
+                .load(thumbnailDownloadUrl)
+                .centerCrop()
+                .into(mThumbnailView);
     }
 }

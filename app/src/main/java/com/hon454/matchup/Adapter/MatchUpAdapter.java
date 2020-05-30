@@ -1,6 +1,7 @@
 package com.hon454.matchup.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.hon454.matchup.Database.Post;
+import com.hon454.matchup.PostDetailActivity;
 import com.hon454.matchup.R;
 
 import java.util.ArrayList;
@@ -42,6 +44,17 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
         for(Post post : postList) {
 
         }
+
+        final String postKey = postList.get(position).uid;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Launch PostDetailActivity
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
+                context.startActivity(intent);
+            }
+        });
 
 
         Glide.with(holder.itemView)

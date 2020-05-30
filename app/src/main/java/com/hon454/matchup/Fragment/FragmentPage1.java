@@ -27,7 +27,7 @@ public class FragmentPage1 extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Post> arrayList;
+    private ArrayList<Post> postList;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
 
@@ -45,17 +45,17 @@ public class FragmentPage1 extends Fragment {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        arrayList = new ArrayList<>();
+        postList = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("posts");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                arrayList.clear(); //초기화
+                postList.clear(); //초기화
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    arrayList.add(post);
+                    postList.add(post);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -66,7 +66,7 @@ public class FragmentPage1 extends Fragment {
             }
         });
 
-        adapter = new MatchUpAdapter(arrayList, getActivity());
+        adapter = new MatchUpAdapter(postList, getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;
