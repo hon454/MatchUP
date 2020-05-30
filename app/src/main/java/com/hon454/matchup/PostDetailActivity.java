@@ -2,6 +2,7 @@ package com.hon454.matchup;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -90,6 +91,19 @@ public class PostDetailActivity extends AppCompatActivity {
 //
 //        mCommentButton.setOnClickListener(this);
 //        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        mLeftVoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mRightVoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -109,11 +123,23 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 mLeftOptionModifierView.setText(post.leftModifier);
                 mLeftOptionTitleView.setText(post.leftTitle);
-//                mLeftOptionPercentageView.setText();
 
                 mRightOptionModifierView.setText(post.rightModifier);
                 mRightOptionTitleView.setText(post.rightTitle);
-//                mRightOptionPercentageView.setText();
+
+                int leftVotersNumber = post.leftVoterUidList.size();
+                int rightVotersNumber = post.rightVoterUidList.size();
+                int allVotersNumber = leftVotersNumber + rightVotersNumber;
+                if(allVotersNumber == 0) {
+                    mLeftOptionPercentageView.setText("50%");
+                    mRightOptionPercentageView.setText("50%");
+                } else {
+                    mLeftOptionPercentageView.setText(String.format(".1f%", (float)leftVotersNumber / allVotersNumber * 100));
+                    mRightOptionPercentageView.setText(String.format(".1f%", (float)rightVotersNumber / allVotersNumber * 100));
+                }
+
+
+
             }
 
             @Override
@@ -148,5 +174,13 @@ public class PostDetailActivity extends AppCompatActivity {
                 .load(thumbnailDownloadUrl)
                 .centerCrop()
                 .into(mThumbnailView);
+    }
+
+    private void voteLeft() {
+
+    }
+
+    private void voteRight() {
+
     }
 }
