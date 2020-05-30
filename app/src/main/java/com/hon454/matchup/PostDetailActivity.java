@@ -22,7 +22,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hon454.matchup.Database.Post;
 
-public class PostDetailActivity extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class PostDetailActivity extends BaseActivity {
     private static final String TAG = "PostDetailActivity";
     public static final String EXTRA_POST_KEY = "post_key";
 
@@ -30,6 +33,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private DatabaseReference mCommentsReference;
     private ValueEventListener mPostListener;
     private String mPostKey;
+    private Post mPost;
 //    private CommentAdapter mAdapter;
 
     private TextView mTitleView;
@@ -95,13 +99,13 @@ public class PostDetailActivity extends AppCompatActivity {
         mLeftVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                voteLeft();
             }
         });
         mRightVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                voteRight();
             }
         });
     }
@@ -127,19 +131,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 mRightOptionModifierView.setText(post.rightModifier);
                 mRightOptionTitleView.setText(post.rightTitle);
 
-                int leftVotersNumber = post.leftVoterUidList.size();
-                int rightVotersNumber = post.rightVoterUidList.size();
-                int allVotersNumber = leftVotersNumber + rightVotersNumber;
-                if(allVotersNumber == 0) {
-                    mLeftOptionPercentageView.setText("50%");
-                    mRightOptionPercentageView.setText("50%");
-                } else {
-                    mLeftOptionPercentageView.setText(String.format(".1f%", (float)leftVotersNumber / allVotersNumber * 100));
-                    mRightOptionPercentageView.setText(String.format(".1f%", (float)rightVotersNumber / allVotersNumber * 100));
-                }
-
-
-
+                updateVoteRate(post.leftVoterUidList.size(), post.rightVoterUidList.size());
             }
 
             @Override
@@ -176,11 +168,77 @@ public class PostDetailActivity extends AppCompatActivity {
                 .into(mThumbnailView);
     }
 
-    private void voteLeft() {
+    private void voteRight() {
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                if(post.leftVoterUidList.contains(getUid()) || post.rightVoterUidList.contains(getUid())) {
+                    Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    post.rightVoterUidList.add(getUid());
 
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                    database.child("posts").child(post.uid).child("rightVoterUidList").setValue(post.rightVoterUidList);
+                    database.child("user-posts").child(post.authorUid).child(post.uid).child("rightVoterUidList").setValue(post.rightVoterUidList);
+                    Toast.makeText(PostDetailActivity.this, "투표 참여 감사합니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Toast.makeText(PostDetailActivity.this, "Failed to load post.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        mPostReference.addListenerForSingleValueEvent(postListener);
     }
 
-    private void voteRight() {
+    private void voteLeft() {
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                if(post.leftVoterUidList.contains(getUid()) || post.leftVoterUidList.contains(getUid())) {
+                    Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    post.leftVoterUidList.add(getUid());
 
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                    database.child("posts").child(post.uid).child("leftVoterUidList").setValue(post.leftVoterUidList);
+                    database.child("user-posts").child(post.authorUid).child(post.uid).child("leftVoterUidList").setValue(post.leftVoterUidList);
+                    Toast.makeText(PostDetailActivity.this, "투표 참여 감사합니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Toast.makeText(PostDetailActivity.this, "Failed to load post.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        mPostReference.addListenerForSingleValueEvent(postListener);
+    }
+
+    private void updateVoteRate(int leftVotersNumber, int rightVotersNumber) {
+        int allVotersNumber = leftVotersNumber + rightVotersNumber;
+        if(allVotersNumber == 0) {
+            mLeftOptionPercentageView.setText("50%");
+            mRightOptionPercentageView.setText("50%");
+        } else {
+            if(leftVotersNumber == 0 ) {
+                mLeftOptionPercentageView.setText("0%");
+            } else {
+                mLeftOptionPercentageView.setText(String.format("%.1f%%", (float)leftVotersNumber / allVotersNumber * 100));
+            }
+
+            if(rightVotersNumber == 0 ) {
+                mRightOptionPercentageView.setText("0%");
+            } else {
+                mRightOptionPercentageView.setText(String.format("%.1f%%", (float)rightVotersNumber / allVotersNumber * 100));
+            }
+        }
     }
 }

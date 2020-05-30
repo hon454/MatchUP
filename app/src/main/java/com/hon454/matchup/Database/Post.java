@@ -52,8 +52,8 @@ public class Post {
         this.leftTitle = leftTitle;
         this.rightModifier = rightModifier;
         this.rightTitle = rightTitle;
-        this.leftVoterUidList = leftVoterUidList;
-        this.rightVoterUidList = rightVoterUidList;
+        this.leftVoterUidList.addAll(leftVoterUidList);
+        this.rightVoterUidList.addAll(rightVoterUidList);
     }
 
     public Map<String, Object> toMap() {
