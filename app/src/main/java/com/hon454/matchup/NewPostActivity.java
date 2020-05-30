@@ -180,8 +180,8 @@ public class NewPostActivity extends AppCompatActivity {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            writeNewPost(userId, user.nickname, title, thumbnailUri, leftOptionModifier,
-                                    leftOptionTitle, rightOptionModifier, rightOptionTitle, postSubject);
+                            writeNewPost(userId, user.nickname, title, leftOptionModifier,
+                                    leftOptionTitle, rightOptionModifier, rightOptionTitle, postSubject, thumbnailUri);
                         }
 
                         setEditingEnabled(true);
@@ -206,37 +206,26 @@ public class NewPostActivity extends AppCompatActivity {
         isPosting = !enabled;
     }
 
-    private void writeNewPost(final String authorUid, final String authorName, final String title, Uri thumbnailUri, final String leftOptionModifier,
-                              final String leftOptionTitle, final String rightOptionModifier, final String rightOptionTitle, final String subject) {
+    private void writeNewPost(final String authorUid, final String authorName, final String title, final String leftOptionModifier,
+                              final String leftOptionTitle, final String rightOptionModifier, final String rightOptionTitle, final String subject, Uri thumbnailUri) {
+
         final String postUid = mDatabase.child("posts").push().getKey();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         String filename = postUid + ".png";
 
 
-        // Save post thumbnail to Storage
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/thumbnail/" + filename);
 
+        // 썸네일 업로드
         storageRef.putFile(thumbnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // 원격 저장소의 썸네일 다운로드 URL 가져오기
 
-                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
-                                        leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, uri.toString());
-                                Map<String, Object> postValues = post.toMap();
-                                Map<String, Object> childUpdates = new HashMap<>();
-                                childUpdates.put("/posts/" + postUid, postValues);
-                                childUpdates.put("/user-posts/" + authorUid + "/" + postUid, postValues);
-                                mDatabase.updateChildren(childUpdates);
+                        Post post = new Post(postUid, authorUid, authorName, title, leftOptionModifier,
+                                leftOptionTitle, rightOptionModifier, rightOptionTitle, subject, null);
 
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                            }
-                        });
+                        UploadPost(storageRef, post);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -244,6 +233,24 @@ public class NewPostActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
+    }
+
+    private void UploadPost(StorageReference storageReference, final Post post) {
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                post.thumbnailDownloadUrl = uri.toString();
+                Map<String, Object> postValues = post.toMap();
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("/posts/" + post.uid, postValues);
+                childUpdates.put("/user-posts/" + post.authorUid + "/" + post.uid, postValues);
+                mDatabase.updateChildren(childUpdates);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
 
 //    Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.basic_right_eye);  // first image

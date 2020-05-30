@@ -79,6 +79,10 @@ public class Post {
         return thumbnailDownloadUrl;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
     public String getTitle() {
         return title;
     }
