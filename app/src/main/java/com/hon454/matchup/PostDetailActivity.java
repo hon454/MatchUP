@@ -106,6 +106,7 @@ public class PostDetailActivity extends BaseActivity {
                 postComment();
             }
         });
+        //댓글 recyclerView 스크롤 기능 삭제
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public boolean canScrollHorizontally() {

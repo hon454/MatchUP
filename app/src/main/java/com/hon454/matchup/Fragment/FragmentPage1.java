@@ -53,7 +53,11 @@ public class FragmentPage1 extends Fragment {
                         postList.clear(); //초기화
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Post post = snapshot.getValue(Post.class);
-                            postList.add(post);
+                            if(post.getSubject().equals("시사·이슈")) {
+                                postList.add(post);
+                            } else {
+
+                            }
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -81,7 +85,11 @@ public class FragmentPage1 extends Fragment {
                 postList.clear(); //초기화
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Post post = snapshot.getValue(Post.class);
-                    postList.add(post);
+                    if(post.getSubject().equals("시사·이슈")) {
+                        postList.add(post);
+                    } else {
+
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
