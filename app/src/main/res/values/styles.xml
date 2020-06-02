@@ -5,7 +5,7 @@
 
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/subBlue</item>
+        <item name="colorPrimaryDark">@color/gray</item>
         <item name="colorAccent">@color/secondary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

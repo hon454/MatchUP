@@ -106,7 +106,17 @@ public class PostDetailActivity extends BaseActivity {
                 postComment();
             }
         });
-        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollHorizontally() {
+                return false;
+            }
+
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
 
         mLeftVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override

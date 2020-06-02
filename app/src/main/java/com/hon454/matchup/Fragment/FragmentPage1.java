@@ -42,6 +42,7 @@ public class FragmentPage1 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page1,container,false);
 
+        //아래로 Swipe 했을 때 리스트 새로고침 기능
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -62,12 +63,9 @@ public class FragmentPage1 extends Fragment {
 
                     }
                 });
-
-                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false); //새로고침 이미지 없애기
             }
         });
-
-
 
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView_frag1);
         recyclerView.setHasFixedSize(true);

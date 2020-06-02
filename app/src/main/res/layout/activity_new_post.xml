@@ -10,7 +10,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,6 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -39,12 +40,12 @@
                 android:layout_height="wrap_content"
                 android:text="글쓰기"
                 android:textColor="@color/black"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Match Up"/>
+                android:text="Match Up" />
         </LinearLayout>
 
         <TextView
@@ -58,13 +59,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CACACA"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            tools:layout_marginTop="10dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout_post_subject"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout2"
         android:gravity="center_vertical">
 
@@ -91,7 +99,7 @@
     <LinearLayout
         android:id="@+id/linearLayout_post_title"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/linearLayout_post_subject">
 
@@ -119,69 +127,70 @@
         android:id="@+id/imageButton_thumbnail"
         android:layout_width="0dp"
         android:layout_height="270dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout_post_title"
-        app:srcCompat="@drawable/default_profile" />
+        app:srcCompat="@drawable/vs" />
 
-    <EditText
-        android:id="@+id/et_leftOptionModifier"
-        android:layout_width="349dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginEnd="33dp"
-        android:ems="10"
-        android:hint="좌측 선택지 수식어"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/et_leftOptionTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail">
 
-    <EditText
-        android:id="@+id/et_leftOptionTitle"
-        android:layout_width="349dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginEnd="33dp"
-        android:ems="10"
-        android:hint="좌측 선택지 제목"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/et_rightOptionModifier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_leftOptionModifier" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail">
 
-    <EditText
-        android:id="@+id/et_rightOptionModifier"
-        android:layout_width="349dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginEnd="33dp"
-        android:ems="10"
-        android:hint="우측 선택지 수식어"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/et_rightOptionTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_leftOptionTitle" />
+            <EditText
+                android:id="@+id/et_leftOptionModifier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="좌측 선택지 수식어"
+                android:inputType="textPersonName"/>
 
-    <EditText
-        android:id="@+id/et_rightOptionTitle"
-        android:layout_width="349dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginEnd="33dp"
-        android:ems="10"
-        android:hint="우측 선택지 제목"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_rightOptionModifier" />
+            <EditText
+                android:id="@+id/et_leftOptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="좌측 선택지 제목"
+                android:inputType="textPersonName"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="right"
+            app:layout_constraintTop_toBottomOf="@id/imageButton_thumbnail">
+
+            <EditText
+                android:id="@+id/et_rightOptionModifier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:hint="우측 선택지 수식어"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/et_rightOptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:hint="우측 선택지 제목"
+                android:inputType="textPersonName" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
