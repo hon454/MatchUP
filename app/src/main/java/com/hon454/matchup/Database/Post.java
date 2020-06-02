@@ -14,11 +14,11 @@ import java.util.UUID;
 
 public class Post {
 
-    public String uid;
-    public String authorUid;
-    public String authorName;
-    public String title;
-    public String subject;
+    public String uid; //게시글 uid
+    public String authorUid; //게시글 작성자 uid
+    public String authorName; //작성자 닉네임
+    public String title; //게시글 Title
+    public String subject; //게시글 주제
     public Long createdDateTime;
     public Long dueDateTime;
 
