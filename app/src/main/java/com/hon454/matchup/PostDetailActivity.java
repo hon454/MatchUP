@@ -125,6 +125,7 @@ public class PostDetailActivity extends BaseActivity {
                 voteLeft();
             }
         });
+
         mRightVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         listview.setAdapter(adapter);
 
         adapter.addItem(ContextCompat.getDrawable(this, R.drawable.ic_account_circle_black_20dp),"회원 정보");
-        adapter.addItem(ContextCompat.getDrawable(this, R.drawable.ic_info_outline_black_20dp),"버전정보");
+        adapter.addItem(ContextCompat.getDrawable(this, R.drawable.ic_info_outline_black_20dp),"내가 쓴 게시글");
         adapter.addItem(ContextCompat.getDrawable(this, R.drawable.ic_help_outline_black_20dp),"도움말");
         adapter.addItem(ContextCompat.getDrawable(this, R.drawable.ic_logout_black_20dp),"로그아웃");
 
@@ -72,8 +72,12 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         Intent intent = new Intent(getApplicationContext(),UserInfoActivity.class);
                         startActivity(intent);
+                        drawerLayout.closeDrawers();
                         break;
                     case 1:
+                        Intent intent2 = new Intent(getApplicationContext(),MyPostActivity.class);
+                        startActivity(intent2);
+                        drawerLayout.closeDrawers();
                         return;
                     case 2:
                         return;

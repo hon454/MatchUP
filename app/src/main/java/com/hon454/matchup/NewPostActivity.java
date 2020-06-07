@@ -185,6 +185,8 @@ public class NewPostActivity extends AppCompatActivity {
                         }
 
                         setEditingEnabled(true);
+                        Intent intent = new Intent (getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
                         finish();
                     }
 
