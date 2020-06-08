@@ -8,16 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -266,19 +269,20 @@ public class PostDetailActivity extends BaseActivity {
     }
 
     private void postComment() {
-        final String uid = getUid();
-        getDatabaseReference().child("users").child(uid)
+        final String authorUid = getUid();
+        getDatabaseReference().child("users").child(authorUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         String authorName = user.nickname;
 
+                        String commentUid = mCommentsReference.push().getKey();
+
                         String commentText = mCommentField.getText().toString();
-                        Comment comment = new Comment(uid, authorName, commentText);
+                        Comment comment = new Comment(commentUid, authorUid, authorName, commentText);
 
-                        mCommentsReference.push().setValue(comment);
-
+                        mCommentsReference.child(commentUid).setValue(comment);
                         mCommentField.setText(null);
                     }
 
@@ -292,12 +296,15 @@ public class PostDetailActivity extends BaseActivity {
 
         public TextView authorView;
         public TextView bodyView;
+        public ImageButton removeCommentButton;
+
 
         public CommentViewHolder(View itemView) {
             super(itemView);
 
             authorView = itemView.findViewById(R.id.commentAuthor);
             bodyView = itemView.findViewById(R.id.commentBody);
+            removeCommentButton = itemView.findViewById(R.id.removeCommentButton);
         }
     }
 
@@ -389,9 +396,28 @@ public class PostDetailActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(CommentViewHolder holder, int position) {
-            Comment comment = mComments.get(position);
+            final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
             holder.bodyView.setText(comment.text);
+
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.d(TAG, comment.authorUid + "/" + uid);
+            if(comment.authorUid.equals(uid)) {
+                holder.removeCommentButton.setVisibility(View.VISIBLE);
+                holder.removeCommentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDatabaseReference.child(comment.uid).removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                Log.d(TAG, "Complete remove comment " + comment.uid);
+                            }
+                        });
+                    }
+                });
+            } else {
+                holder.removeCommentButton.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
