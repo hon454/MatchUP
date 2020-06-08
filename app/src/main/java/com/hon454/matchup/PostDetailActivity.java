@@ -169,6 +169,7 @@ public class PostDetailActivity extends BaseActivity {
         mPostListener = postListener;
 
         mAdapter = new CommentAdapter(this, mCommentsReference);
+        mCommentsRecycler.setNestedScrollingEnabled(false);
         mCommentsRecycler.setAdapter(mAdapter);
     }
 
