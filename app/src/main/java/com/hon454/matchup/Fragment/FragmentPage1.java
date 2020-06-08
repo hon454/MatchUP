@@ -76,26 +76,7 @@ public class FragmentPage1 extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        postList.clear(); //초기화
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Post post = snapshot.getValue(Post.class);
-                            if(post.getSubject().equals("시사·이슈")) {
-                                postList.add(post);
-                            } else {
-
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                RefreshList();
                 swipeRefreshLayout.setRefreshing(false); //새로고침 이미지 없애기
             }
         });
@@ -105,5 +86,28 @@ public class FragmentPage1 extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    public void RefreshList() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                postList.clear(); //초기화
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Post post = snapshot.getValue(Post.class);
+                    if(post.getSubject().equals("시사·이슈")) {
+                        postList.add(post);
+                    } else {
+
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

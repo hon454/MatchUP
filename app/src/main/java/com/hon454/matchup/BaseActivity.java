@@ -9,6 +9,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class BaseActivity extends AppCompatActivity {
+    public final static int REQUEST_POST_WRITE = 1;
+
 //    private ProgressDialog mProgressDialog;
 //
 //    public void showProgressDialog() {

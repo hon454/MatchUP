@@ -185,9 +185,6 @@ public class NewPostActivity extends AppCompatActivity {
                         }
 
                         setEditingEnabled(true);
-                        Intent intent = new Intent (getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                        finish();
                     }
 
                     @Override
@@ -246,7 +243,15 @@ public class NewPostActivity extends AppCompatActivity {
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put("/posts/" + post.uid, postValues);
                 childUpdates.put("/user-posts/" + post.authorUid + "/" + post.uid, postValues);
-                mDatabase.updateChildren(childUpdates);
+                mDatabase.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        Intent intent = new Intent();
+                        intent.putExtra("result", true);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

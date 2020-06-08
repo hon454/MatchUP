@@ -1,9 +1,11 @@
 package com.hon454.matchup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -25,12 +27,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.hon454.matchup.Adapter.ListViewAdapter;
 import com.hon454.matchup.Adapter.ViewPagerAdapter;
 import com.hon454.matchup.Database.ListViewItem;
+import com.hon454.matchup.Fragment.FragmentPage1;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
+
 
     private FirebaseAuth mAuth; // declare_firebase_Auth
     private DrawerLayout drawerLayout;
     private View drawerView;
+    private ViewPager viewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
 
     @Override
@@ -100,25 +105,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //ViewPager, TabLayout 구현
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
         fragmentPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         viewPager.setAdapter(fragmentPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
 
         //Floating Action Button 구현
         FloatingActionButton fab =findViewById(R.id.floating_button);
         fab.setOnClickListener(new FABClickListener());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_POST_WRITE) {
+            if(resultCode == RESULT_OK) {
+                boolean isPostWrote = data.getBooleanExtra("result", false);
+                if(isPostWrote) {
+                    if(viewPager.getCurrentItem() == 0) {
+                        FragmentPage1 fragmentPage1 = (FragmentPage1)viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+                        fragmentPage1.RefreshList();
+                    }
+                }
+            }
+        }
+    }
+
     //Floating Action Button 클릭 이벤트 처리
-    class FABClickListener implements View.OnClickListener{
+    private class FABClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
             // FAB Click 이벤트 처리 구간
             Intent intent = new Intent(getApplicationContext(), NewPostActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_POST_WRITE);
         }
     }
     //Sign out
