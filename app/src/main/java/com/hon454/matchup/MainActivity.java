@@ -133,6 +133,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
     //Floating Action Button 클릭 이벤트 처리
     private class FABClickListener implements View.OnClickListener{
         @Override
