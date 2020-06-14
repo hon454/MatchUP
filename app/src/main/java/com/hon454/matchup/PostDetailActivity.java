@@ -69,6 +69,8 @@ public class PostDetailActivity extends BaseActivity {
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
 
+    private ImageButton mBackButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +137,14 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 voteRight();
+            }
+        });
+
+        mBackButton = findViewById(R.id.backButton);
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
