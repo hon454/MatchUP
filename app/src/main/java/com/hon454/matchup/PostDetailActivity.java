@@ -11,13 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,9 +35,7 @@ import com.hon454.matchup.Database.Post;
 import com.hon454.matchup.Database.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PostDetailActivity extends BaseActivity {
     private static final String TAG = "PostDetailActivity";
@@ -70,6 +69,11 @@ public class PostDetailActivity extends BaseActivity {
     private RecyclerView mCommentsRecycler;
 
     private ImageButton mBackButton;
+
+    private ProgressBar mStatsProgressBar;
+    private TextView mStatsLeftOptionPercentageTextView;
+    private TextView mStatsRightOptionPercentageTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,10 @@ public class PostDetailActivity extends BaseActivity {
         mCommentField = findViewById(R.id.fieldCommentText);
         mCommentButton = findViewById(R.id.buttonPostComment);
         mCommentsRecycler = findViewById(R.id.recyclerPostComments);
+
+        mStatsProgressBar = findViewById(R.id.statsProgressBar);
+        mStatsLeftOptionPercentageTextView = findViewById(R.id.statsLeftOptionPercentage);
+        mStatsRightOptionPercentageTextView = findViewById(R.id.statsRightOptionPercentage);
 
         mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +160,8 @@ public class PostDetailActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        updateStats();
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -278,6 +288,34 @@ public class PostDetailActivity extends BaseActivity {
                 mRightOptionPercentageView.setText(String.format("%.1f%%", (float)rightVotersNumber / allVotersNumber * 100));
             }
         }
+    }
+
+    private float getLeftVotersPercentage(int leftVotersNumber, int rightVotersNumber) {
+        return 0.0f;
+    }
+
+    private void updateStats() {
+
+        float leftVotersPercentage = 4f;
+        float rightVotersPercentage = 96f;
+
+        if(leftVotersPercentage < 5f) {
+            mStatsLeftOptionPercentageTextView.setText("");
+            mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", rightVotersPercentage));
+
+        }
+        else if(rightVotersPercentage < 5f) {
+            mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", leftVotersPercentage));
+            mStatsRightOptionPercentageTextView.setText("");
+        }
+        else {
+            mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", leftVotersPercentage));
+            mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", rightVotersPercentage));
+        }
+
+        mStatsLeftOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, leftVotersPercentage));
+        mStatsRightOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, rightVotersPercentage));
+        mStatsProgressBar.setProgress((int)leftVotersPercentage, true);
     }
 
     private void postComment() {
