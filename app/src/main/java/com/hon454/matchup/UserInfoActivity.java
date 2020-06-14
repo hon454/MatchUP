@@ -166,7 +166,7 @@ public class UserInfoActivity extends AppCompatActivity {
             profileUri = filePath.toString();
         }
 
-        User user = new User(profileUri, nickname, age, sex, job, residence);
+        User user = new User(userId, profileUri, nickname, age, sex, job, residence);
 
         mDatabase.child("users").child(userId).setValue(user);
     }

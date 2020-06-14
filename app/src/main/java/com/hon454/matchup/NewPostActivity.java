@@ -180,7 +180,7 @@ public class NewPostActivity extends AppCompatActivity {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            writeNewPost(userId, user.nickname, title, leftOptionModifier,
+                            writeNewPost(userId, user.getNickname(), title, leftOptionModifier,
                                     leftOptionTitle, rightOptionModifier, rightOptionTitle, postSubject, thumbnailUri);
                         }
 

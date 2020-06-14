@@ -36,4 +36,8 @@ public class BaseActivity extends AppCompatActivity {
     public DatabaseReference getDatabaseReference() {
         return FirebaseDatabase.getInstance().getReference();
     }
+
+    public DatabaseReference getUserDatabaseReference() {
+        return FirebaseDatabase.getInstance().getReference().child("users");
+    }
 }

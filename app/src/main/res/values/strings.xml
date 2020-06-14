@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MatchUP</string>
+
+    <string name="age_prompt">MatchUP</string>
+    <string name="sex_prompt">MatchUP</string>
+    <string name="job_prompt">MatchUP</string>
+    <string name="residence_prompt">MatchUP</string>
 </resources>

@@ -7,12 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +77,18 @@ public class PostDetailActivity extends BaseActivity {
     private TextView mStatsLeftOptionPercentageTextView;
     private TextView mStatsRightOptionPercentageTextView;
 
+    private Spinner mAgeSpinner;
+    private Spinner mSexSpinner;
+    private Spinner mJobSpinner;
+    private Spinner mResidenceSpinner;
+
+    private String mSelectedAge = "전연령";
+    private String mSelectedSex = "모든 성별";
+    private String mSelectedJob = "모든 직종";
+    private String mSelectedResidence = "모든 지역";
+
+    private boolean isInitialized = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +127,8 @@ public class PostDetailActivity extends BaseActivity {
         mStatsProgressBar = findViewById(R.id.statsProgressBar);
         mStatsLeftOptionPercentageTextView = findViewById(R.id.statsLeftOptionPercentage);
         mStatsRightOptionPercentageTextView = findViewById(R.id.statsRightOptionPercentage);
+
+        setSpinner();
 
         mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +170,8 @@ public class PostDetailActivity extends BaseActivity {
                 finish();
             }
         });
+
+        isInitialized = true;
     }
 
     @Override
@@ -316,28 +335,152 @@ public class PostDetailActivity extends BaseActivity {
     }
 
     private void updateStats() {
+
+        if(!isInitialized) {
+            return;
+        }
+
         assert (mPost != null) : "post must not be null";
 
-        float leftVotersPercentage = getLeftVotersPercentage();
-        float rightVotersPercentage = getRightVotersPercentage();
+        final ArrayList<User> leftVoterList = new ArrayList<>();
+        final ArrayList<User> rightVoterList = new ArrayList<>();
 
-        if(leftVotersPercentage < 5f) {
-            mStatsLeftOptionPercentageTextView.setText("");
-            mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", rightVotersPercentage));
+        DatabaseReference userDatabaseReference = getUserDatabaseReference();
+        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                leftVoterList.clear();
+                rightVoterList.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+                    String userUid = user.getUid();
+                    Log.d("PostDetailActivity3", userUid);
+                    if(mPost.leftVoterUidList.contains(userUid)) {
+                        leftVoterList.add(user);
+                    }
+                    else if(mPost.rightVoterUidList.contains(userUid)) {
+                        rightVoterList.add(user);
+                    }
+                }
 
-        }
-        else if(rightVotersPercentage < 5f) {
-            mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", leftVotersPercentage));
-            mStatsRightOptionPercentageTextView.setText("");
-        }
-        else {
-            mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", leftVotersPercentage));
-            mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", rightVotersPercentage));
+                final ArrayList<User> filteredLeftVoterList = getFilteredVoterList(leftVoterList);
+                final ArrayList<User> filteredRightVoterList = getFilteredVoterList(rightVoterList);
+
+                final int filteredLeftVotersSize = filteredLeftVoterList.size();
+                final int filteredRightVotersSize = filteredRightVoterList.size();
+                Log.d("PostDetailActivity1", leftVoterList.size() + "/" + rightVoterList.size());
+                Log.d("PostDetailActivity2", filteredLeftVotersSize + "/" + filteredRightVotersSize);
+
+                final int filteredAllVotersSize = filteredLeftVotersSize + filteredRightVotersSize;
+
+                float filteredLeftVotersPercentage;
+                float filteredRightVotersPercentage;
+                if(filteredAllVotersSize == 0) {
+                    filteredLeftVotersPercentage = 50f;
+                    filteredRightVotersPercentage = 50f;
+                } else {
+                    filteredLeftVotersPercentage = (float)filteredLeftVotersSize / filteredAllVotersSize * 100f;
+                    filteredRightVotersPercentage = (float)filteredRightVotersSize / filteredAllVotersSize * 100f;
+                }
+
+                if(filteredLeftVotersPercentage < 5f) {
+                    mStatsLeftOptionPercentageTextView.setText("");
+                    mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", filteredRightVotersPercentage));
+
+                }
+                else if(filteredRightVotersPercentage < 5f) {
+                    mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", filteredLeftVotersPercentage));
+                    mStatsRightOptionPercentageTextView.setText("");
+                }
+                else {
+                    mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", filteredLeftVotersPercentage));
+                    mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", filteredRightVotersPercentage));
+                }
+
+                mStatsLeftOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, filteredLeftVotersPercentage));
+                mStatsRightOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, filteredRightVotersPercentage));
+                mStatsProgressBar.setProgress((int)filteredLeftVotersPercentage, true);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private ArrayList<User> getFilteredVoterList(ArrayList<User> voterList) {
+        ArrayList<User> filteredVoterList = new ArrayList<>();
+
+        if(voterList == null || voterList.isEmpty()) {
+            return filteredVoterList;
         }
 
-        mStatsLeftOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, leftVotersPercentage));
-        mStatsRightOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, rightVotersPercentage));
-        mStatsProgressBar.setProgress((int)leftVotersPercentage, true);
+        for(User voter : voterList) {
+            int age = Integer.parseInt(voter.getAge());
+            switch (mSelectedAge) {
+                case "전연령":
+                    break;
+                case "20세 미만":
+                    if(!(age < 20)) {
+                        continue;
+                    }
+                    break;
+                case "20대":
+                    if(!(20 <= age && age < 30)) {
+                        continue;
+                    }
+                    break;
+                case "30대":
+                    if(!(30 <= age && age < 40)) {
+                        continue;
+                    }
+                    break;
+                case "40대":
+                    if(!(40 <= age && age < 50)) {
+                        continue;
+                    }
+                    break;
+                case "50대":
+                    if(!(50 <= age && age < 60)) {
+                        continue;
+                    }
+                    break;
+                case "60대 이상":
+                    if(!(60 <= age)) {
+                        continue;
+                    }
+                    break;
+            }
+
+            String sex = voter.getSex();
+            if(!mSelectedSex.equals("모든 성별")) {
+                if(!sex.equals(mSelectedSex)) {
+                    continue;
+                }
+            }
+
+            String job = voter.getJobs();
+            if(!mSelectedJob.equals("모든 직종")) {
+                if(!job.equals(mSelectedJob)) {
+                    continue;
+                }
+            }
+
+            String residence = voter.getResidence();
+            if(!mSelectedResidence.equals("모든 지역")) {
+                if(!residence.equals(mSelectedResidence)) {
+                    continue;
+                }
+            }
+            filteredVoterList.add(voter);
+        }
+
+        return filteredVoterList;
+    }
+
+    private void updateStatsUi() {
+
     }
 
     private void postComment() {
@@ -347,7 +490,7 @@ public class PostDetailActivity extends BaseActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
-                        String authorName = user.nickname;
+                        String authorName = user.getNickname();
 
                         String commentUid = mCommentsReference.push().getKey();
 
@@ -364,8 +507,87 @@ public class PostDetailActivity extends BaseActivity {
                 });
     }
 
-    private static class CommentViewHolder extends RecyclerView.ViewHolder {
+    private void setSpinner() {
+        setAgeSpinner();
+        setSexSpinner();
+        setJobSpinner();
+        setResidenceSpinner();
+    }
 
+    private void setAgeSpinner() {
+        mAgeSpinner = findViewById(R.id.ageSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.age_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);;
+        mAgeSpinner.setAdapter(adapter);
+        mAgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedAge = parent.getItemAtPosition(position).toString();
+                updateStats();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void setSexSpinner() {
+        mSexSpinner = findViewById(R.id.sexSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sex_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);;
+        mSexSpinner.setAdapter(adapter);
+        mSexSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedSex = parent.getItemAtPosition(position).toString();
+                updateStats();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void setJobSpinner() {
+        mJobSpinner = findViewById(R.id.jobSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.job_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);;
+        mJobSpinner.setAdapter(adapter);
+        mJobSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedJob = parent.getItemAtPosition(position).toString();
+                updateStats();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void setResidenceSpinner() {
+        mResidenceSpinner = findViewById(R.id.residenceSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.residence_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);;
+        mResidenceSpinner.setAdapter(adapter);
+        mResidenceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedResidence = parent.getItemAtPosition(position).toString();
+                updateStats();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private static class CommentViewHolder extends RecyclerView.ViewHolder {
         public TextView authorView;
         public TextView bodyView;
         public ImageButton removeCommentButton;
