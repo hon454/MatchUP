@@ -1,6 +1,7 @@
 package com.hon454.matchup;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -407,12 +409,24 @@ public class PostDetailActivity extends BaseActivity {
                 holder.removeCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mDatabaseReference.child(comment.uid).removeValue(new DatabaseReference.CompletionListener() {
+                        AlertDialog.Builder ad = new AlertDialog.Builder(mContext);
+                        ad.setTitle("댓글 삭제");
+                        ad.setMessage("댓글을 삭제하시겠습니까?");
+                        ad.setPositiveButton("예", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                Log.d(TAG, "Complete remove comment " + comment.uid);
+                            public void onClick(DialogInterface dialog, int which) {
+                                removeComment(comment.uid);
+                                dialog.dismiss();
                             }
                         });
+
+                        ad.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ad.show();
                     }
                 });
             } else {
@@ -429,6 +443,16 @@ public class PostDetailActivity extends BaseActivity {
             if (mChildEventListener != null) {
                 mDatabaseReference.removeEventListener(mChildEventListener);
             }
+        }
+
+        public void removeComment(final String commentUid) {
+            mDatabaseReference.child(commentUid).removeValue(new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    Toast.makeText(mContext, "댓글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Complete remove comment " + commentUid);
+                }
+            });
         }
     }
 }
