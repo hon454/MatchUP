@@ -74,7 +74,6 @@ public class PostDetailActivity extends BaseActivity {
     private TextView mStatsLeftOptionPercentageTextView;
     private TextView mStatsRightOptionPercentageTextView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +83,6 @@ public class PostDetailActivity extends BaseActivity {
         if (mPostKey == null) {
             throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
         }
-
 
         // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference().child("posts").child(mPostKey);
@@ -161,26 +159,25 @@ public class PostDetailActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
 
-        updateStats();
-
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
+                mPost = dataSnapshot.getValue(Post.class);
 
-                mAuthorView.setText(post.authorName);
-                mTitleView.setText(post.title);
+                mAuthorView.setText(mPost.authorName);
+                mTitleView.setText(mPost.title);
 //                mCountdownView.setText();
 
-                LoadThumbnailWithGlide(post.thumbnailDownloadUrl);
+                LoadThumbnailWithGlide(mPost.thumbnailDownloadUrl);
 
-                mLeftOptionModifierView.setText(post.leftModifier);
-                mLeftOptionTitleView.setText(post.leftTitle);
+                mLeftOptionModifierView.setText(mPost.leftModifier);
+                mLeftOptionTitleView.setText(mPost.leftTitle);
 
-                mRightOptionModifierView.setText(post.rightModifier);
-                mRightOptionTitleView.setText(post.rightTitle);
+                mRightOptionModifierView.setText(mPost.rightModifier);
+                mRightOptionTitleView.setText(mPost.rightTitle);
 
-                updateVoteRate(post.leftVoterUidList.size(), post.rightVoterUidList.size());
+                updateVoteRate(mPost.leftVoterUidList.size(), mPost.rightVoterUidList.size());
+                updateStats();
             }
 
             @Override
@@ -220,15 +217,15 @@ public class PostDetailActivity extends BaseActivity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
-                if(post.leftVoterUidList.contains(getUid()) || post.rightVoterUidList.contains(getUid())) {
+                mPost = dataSnapshot.getValue(Post.class);
+                if(mPost.leftVoterUidList.contains(getUid()) || mPost.rightVoterUidList.contains(getUid())) {
                     Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
                 } else {
-                    post.rightVoterUidList.add(getUid());
+                    mPost.rightVoterUidList.add(getUid());
 
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                    database.child("posts").child(post.uid).child("rightVoterUidList").setValue(post.rightVoterUidList);
-                    database.child("user-posts").child(post.authorUid).child(post.uid).child("rightVoterUidList").setValue(post.rightVoterUidList);
+                    database.child("posts").child(mPost.uid).child("rightVoterUidList").setValue(mPost.rightVoterUidList);
+                    database.child("user-posts").child(mPost.authorUid).child(mPost.uid).child("rightVoterUidList").setValue(mPost.rightVoterUidList);
                     Toast.makeText(PostDetailActivity.this, "투표 참여 감사합니다", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -247,15 +244,15 @@ public class PostDetailActivity extends BaseActivity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
-                if(post.leftVoterUidList.contains(getUid()) || post.leftVoterUidList.contains(getUid())) {
+                mPost = dataSnapshot.getValue(Post.class);
+                if(mPost.leftVoterUidList.contains(getUid()) || mPost.leftVoterUidList.contains(getUid())) {
                     Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
                 } else {
-                    post.leftVoterUidList.add(getUid());
+                    mPost.leftVoterUidList.add(getUid());
 
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                    database.child("posts").child(post.uid).child("leftVoterUidList").setValue(post.leftVoterUidList);
-                    database.child("user-posts").child(post.authorUid).child(post.uid).child("leftVoterUidList").setValue(post.leftVoterUidList);
+                    database.child("posts").child(mPost.uid).child("leftVoterUidList").setValue(mPost.leftVoterUidList);
+                    database.child("user-posts").child(mPost.authorUid).child(mPost.uid).child("leftVoterUidList").setValue(mPost.leftVoterUidList);
                     Toast.makeText(PostDetailActivity.this, "투표 참여 감사합니다", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -290,14 +287,39 @@ public class PostDetailActivity extends BaseActivity {
         }
     }
 
-    private float getLeftVotersPercentage(int leftVotersNumber, int rightVotersNumber) {
-        return 0.0f;
+    private int getAllVotersNumber() {
+        return mPost.leftVoterUidList.size() + mPost.rightVoterUidList.size();
+    }
+
+    private float getLeftVotersPercentage() {
+        assert (mPost != null) : "post must not be null";
+
+        float allVotersNumber = getAllVotersNumber();
+
+        if(allVotersNumber == 0) {
+            return 50f;
+        }
+
+        return mPost.leftVoterUidList.size() / allVotersNumber * 100f;
+    }
+
+    private float getRightVotersPercentage() {
+        assert (mPost != null) : "post must not be null";
+
+        float allVotersNumber = getAllVotersNumber();
+
+        if(allVotersNumber == 0) {
+            return 50f;
+        }
+
+        return mPost.rightVoterUidList.size() / allVotersNumber * 100f;
     }
 
     private void updateStats() {
+        assert (mPost != null) : "post must not be null";
 
-        float leftVotersPercentage = 4f;
-        float rightVotersPercentage = 96f;
+        float leftVotersPercentage = getLeftVotersPercentage();
+        float rightVotersPercentage = getRightVotersPercentage();
 
         if(leftVotersPercentage < 5f) {
             mStatsLeftOptionPercentageTextView.setText("");
