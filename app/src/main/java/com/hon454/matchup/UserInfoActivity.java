@@ -160,14 +160,48 @@ public class UserInfoActivity extends AppCompatActivity {
 
     }
 
-    private void writeNewUser(String userId, Uri uri, String nickname, String age, String sex, String job, String residence) {
-        String profileUri = "";
-        if(filePath != null) {
-            profileUri = filePath.toString();
-        }
+    private void writeNewUser(String userId, Uri uri, final String nickname, final String age, final String sex, final String job, final String residence) {
+        final String profileUri = null;
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String fileName = uid + "_profile.png";
+        final StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://matchup-7ce60.appspot.com").child("images/profile/" + fileName);
+        storageReference.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        User user = new User(uid, profileUri, nickname, age, sex, job, residence);
+                        uploadUser(storageReference, user);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
-        User user = new User(userId, profileUri, nickname, age, sex, job, residence);
+                    }
+                });
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
-        mDatabase.child("users").child(userId).setValue(user);
+                    }
+                });
+    }
+
+    private void uploadUser(StorageReference storageReference, final User user) {
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                user.setProfileUri(uri.toString());
+                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 }

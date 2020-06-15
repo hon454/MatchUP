@@ -49,4 +49,8 @@ public class User {
     public String getResidence() {
         return residence;
     }
+
+    public void setProfileUri(String profileUri) {
+        this.profileUri = profileUri;
+    }
 }
