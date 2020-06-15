@@ -18,16 +18,26 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.hon454.matchup.Adapter.ListViewAdapter;
 import com.hon454.matchup.Adapter.ViewPagerAdapter;
 import com.hon454.matchup.Database.ListViewItem;
+import com.hon454.matchup.Database.User;
 import com.hon454.matchup.Fragment.FragmentPage1;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends BaseActivity {
 
@@ -37,11 +47,20 @@ public class MainActivity extends BaseActivity {
     private View drawerView;
     private ViewPager viewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
+    private DatabaseReference mUserReference;
+    private TextView mDrawerNickname;
+    private TextView mDrawerEmail;
+    private ImageView mDrawerProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mUserReference = FirebaseDatabase.getInstance().getReference().child("users").child(getUid());
+        mDrawerNickname = (TextView)findViewById(R.id.mDrawerNickname);
+        mDrawerEmail = (TextView)findViewById(R.id.mDrawerEmail);
+        mDrawerProfile = (ImageView) findViewById(R.id.mDrawerProfile);
 
         //Drawer Layout 구현
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -114,6 +133,30 @@ public class MainActivity extends BaseActivity {
         //Floating Action Button 구현
         FloatingActionButton fab =findViewById(R.id.floating_button);
         fab.setOnClickListener(new FABClickListener());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        ValueEventListener userLinstener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                mDrawerNickname.setText(user.getNickname());
+                mDrawerEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                Glide.with(getApplicationContext())
+                        .load(user.getProfileUri())
+                        .centerCrop()
+                        .into(mDrawerProfile);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mUserReference.addValueEventListener(userLinstener);
     }
 
     @Override
