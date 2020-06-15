@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        Intent intent = new Intent(getApplicationContext(),UserInfoActivity.class);
+                        Intent intent = new Intent(getApplicationContext(),EditUserInfoActivity.class);
                         startActivity(intent);
                         drawerLayout.closeDrawers();
                         break;
