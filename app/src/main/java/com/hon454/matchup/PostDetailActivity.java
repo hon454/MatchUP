@@ -2,6 +2,8 @@ package com.hon454.matchup;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -591,11 +593,13 @@ public class PostDetailActivity extends BaseActivity {
         public TextView authorView;
         public TextView bodyView;
         public ImageButton removeCommentButton;
+        public ImageView commentView;
 
 
         public CommentViewHolder(View itemView) {
             super(itemView);
 
+            commentView = itemView.findViewById(R.id.commentPhoto);
             authorView = itemView.findViewById(R.id.commentAuthor);
             bodyView = itemView.findViewById(R.id.commentBody);
             removeCommentButton = itemView.findViewById(R.id.removeCommentButton);
@@ -606,6 +610,7 @@ public class PostDetailActivity extends BaseActivity {
         private Context mContext;
         private DatabaseReference mDatabaseReference;
         private ChildEventListener mChildEventListener;
+        private DatabaseReference mUserReference;
 
         private List<String> mCommentIds = new ArrayList<>();
         private List<Comment> mComments = new ArrayList<>();
@@ -689,10 +694,31 @@ public class PostDetailActivity extends BaseActivity {
         }
 
         @Override
-        public void onBindViewHolder(CommentViewHolder holder, int position) {
+        public void onBindViewHolder(final CommentViewHolder holder, int position) {
             final Comment comment = mComments.get(position);
             holder.authorView.setText(comment.author);
             holder.bodyView.setText(comment.text);
+
+            mUserReference = FirebaseDatabase.getInstance().getReference().child("users").child(comment.authorUid);
+            ValueEventListener userLinstener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Glide.with(holder.itemView)
+                            .load(user.getProfileUri())
+                            .centerCrop()
+                            .into(holder.commentView);
+                    holder.commentView.setBackground(new ShapeDrawable(new OvalShape()));
+                    holder.commentView.setClipToOutline(true);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mUserReference.addValueEventListener(userLinstener);
+
 
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d(TAG, comment.authorUid + "/" + uid);
