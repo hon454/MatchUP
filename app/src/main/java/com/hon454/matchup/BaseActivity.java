@@ -1,6 +1,7 @@
 package com.hon454.matchup;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +14,7 @@ public class BaseActivity extends AppCompatActivity {
 
 //    private ProgressDialog mProgressDialog;
 //
-//    public void showProgressDialog() {
+//    protected void showProgressDialog() {
 //        if (mProgressDialog == null) {
 //            mProgressDialog = new ProgressDialog(this);
 //            mProgressDialog.setCancelable(false);
@@ -23,21 +24,36 @@ public class BaseActivity extends AppCompatActivity {
 //        mProgressDialog.show();
 //    }
 //
-//    public void hideProgressDialog() {
+//    protected void hideProgressDialog() {
 //        if (mProgressDialog != null && mProgressDialog.isShowing()) {
 //            mProgressDialog.dismiss();
 //        }
 //    }
 
-    public String getUid() {
+    protected String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    public DatabaseReference getDatabaseReference() {
+    protected DatabaseReference getDatabaseReference() {
         return FirebaseDatabase.getInstance().getReference();
     }
 
-    public DatabaseReference getUserDatabaseReference() {
+    protected DatabaseReference getUserDatabaseReference() {
         return FirebaseDatabase.getInstance().getReference().child("users");
+    }
+
+    protected void startSignUpActivity() {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+    }
+
+    protected void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    protected void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

@@ -57,7 +57,7 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/btn_signIn"
+            android:id="@+id/signInButton"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -75,15 +75,16 @@
                 android:layout_height="wrap_content"
                 android:text="MatchUp 회원이 아닌가요?" />
 
-            <TextView
-                android:id="@+id/tv_signUp"
+            <Button
+                android:id="@+id/signUpButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="회원가입 하기"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:text="회원 가입하기"
                 android:textColor="@color/black"
-                android:textSize="14sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
     </LinearLayout>
