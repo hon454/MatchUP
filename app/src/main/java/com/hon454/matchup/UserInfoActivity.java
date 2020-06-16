@@ -155,9 +155,6 @@ public class UserInfoActivity extends AppCompatActivity {
         writeNewUser(user.getUid(), filePath, nickname, age, sex, job, residence);
 
         // Go to MainActivity
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
-
     }
 
     private void writeNewUser(String userId, Uri uri, final String nickname, final String age, final String sex, final String job, final String residence) {
@@ -196,6 +193,8 @@ public class UserInfoActivity extends AppCompatActivity {
             public void onSuccess(Uri uri) {
                 user.setProfileUri(uri.toString());
                 mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user);
+
+                goToMainActivity();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -203,5 +202,10 @@ public class UserInfoActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void goToMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }
