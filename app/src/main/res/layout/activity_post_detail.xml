@@ -216,7 +216,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:text="투표 통계"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -264,26 +279,23 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
 
                 <ProgressBar
                     android:id="@+id/statsProgressBar"
                     style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="0dp"
+                    android:indeterminate="false"
+                    android:max="100"
                     android:progress="50"
                     android:progressDrawable="@drawable/progressbar_turnout" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginRight="10dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/statsLeftOptionPercentage"
