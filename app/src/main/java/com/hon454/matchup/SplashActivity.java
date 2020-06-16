@@ -45,6 +45,7 @@ public class SplashActivity extends BaseActivity {
                         Log.e(TAG, "Current User doesn't have matching user data");
                         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
+                        finish();
                         return;
                     }
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -58,6 +59,10 @@ public class SplashActivity extends BaseActivity {
                 }
             };
             getUserDatabaseReference().child(mAuth.getUid()).addListenerForSingleValueEvent(currentUserDataListener);
+        } else {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

@@ -25,7 +25,6 @@ public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
 
     private FirebaseAuth mAuth;
-    private FirebaseUser mCurrentUser;
 
     private Button mSignInButton;
     private Button mSignUpButton;
@@ -33,6 +32,8 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mAuth = FirebaseAuth.getInstance();
 
         mSignInButton = (Button)findViewById(R.id.signInButton);
         mSignInButton.setOnClickListener(new View.OnClickListener() {

@@ -266,7 +266,7 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPost = dataSnapshot.getValue(Post.class);
-                if(mPost.leftVoterUidList.contains(getUid()) || mPost.leftVoterUidList.contains(getUid())) {
+                if(mPost.leftVoterUidList.contains(getUid()) || mPost.rightVoterUidList.contains(getUid())) {
                     Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     mPost.leftVoterUidList.add(getUid());
@@ -377,18 +377,25 @@ public class PostDetailActivity extends BaseActivity {
 
                 float filteredLeftVotersPercentage;
                 float filteredRightVotersPercentage;
+
                 if(filteredAllVotersSize == 0) {
-                    filteredLeftVotersPercentage = 50f;
-                    filteredRightVotersPercentage = 50f;
+                    filteredLeftVotersPercentage = 0f;
+                    filteredRightVotersPercentage = 100f;
+                    mStatsProgressBar.setSecondaryProgress(100);
                 } else {
                     filteredLeftVotersPercentage = (float)filteredLeftVotersSize / filteredAllVotersSize * 100f;
                     filteredRightVotersPercentage = (float)filteredRightVotersSize / filteredAllVotersSize * 100f;
+                    mStatsProgressBar.setSecondaryProgress(0);
                 }
 
                 if(filteredLeftVotersPercentage < 5f) {
                     mStatsLeftOptionPercentageTextView.setText("");
-                    mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", filteredRightVotersPercentage));
 
+                    if(filteredAllVotersSize == 0) {
+                        mStatsRightOptionPercentageTextView.setText("해당 조건을 만족하는 투표가 없습니다.");
+                    } else {
+                        mStatsRightOptionPercentageTextView.setText(String.format("%.1f%%", filteredRightVotersPercentage));
+                    }
                 }
                 else if(filteredRightVotersPercentage < 5f) {
                     mStatsLeftOptionPercentageTextView.setText(String.format("%.1f%%", filteredLeftVotersPercentage));
@@ -402,7 +409,6 @@ public class PostDetailActivity extends BaseActivity {
                 mStatsLeftOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, filteredLeftVotersPercentage));
                 mStatsRightOptionPercentageTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, filteredRightVotersPercentage));
                 mStatsProgressBar.setProgress((int)filteredLeftVotersPercentage, true);
-
             }
 
             @Override
