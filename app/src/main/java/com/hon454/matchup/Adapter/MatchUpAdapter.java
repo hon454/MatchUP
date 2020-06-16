@@ -39,10 +39,6 @@ public class MatchUpAdapter extends RecyclerView.Adapter<MatchUpAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull MatchUpAdapter.ViewHolder viewHolder, int position) {
         // Glide는 이미지 크기가 무거울때 알아서 잘 조절해서 업로드해줍니다!
-        ArrayList<String> urlList = new ArrayList<>();
-        for(Post post : postList) {
-
-        }
 
         final String postKey = postList.get(position).uid;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

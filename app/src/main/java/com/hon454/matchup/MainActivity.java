@@ -3,6 +3,7 @@ package com.hon454.matchup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -53,6 +54,7 @@ public class MainActivity extends BaseActivity {
     private TextView mDrawerNickname;
     private TextView mDrawerEmail;
     private ImageView mDrawerProfile;
+    private ImageView mSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,15 @@ public class MainActivity extends BaseActivity {
         mDrawerNickname = (TextView)findViewById(R.id.mDrawerNickname);
         mDrawerEmail = (TextView)findViewById(R.id.mDrawerEmail);
         mDrawerProfile = (ImageView) findViewById(R.id.mDrawerProfile);
+        mSearch = (ImageView)findViewById(R.id.mSearch);
+
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //Drawer Layout 구현
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
