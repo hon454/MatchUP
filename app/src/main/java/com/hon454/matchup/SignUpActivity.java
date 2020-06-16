@@ -25,10 +25,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseActivity {
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001; // 구글 로그인 결과 코드
-    private SignInButton signInButton; // google Sign In 버튼
+
+    private SignInButton mGoogleSignInButton;
+    private Button mSignUpButton;
+
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth; // declare_firebase_Auth
 
@@ -38,9 +41,8 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        mAuth = FirebaseAuth.getInstance(); // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
-        // Configure Google Sign In
         // 서버의 클라이언트 ID를 requestIdToken 메서드에 전달
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -49,33 +51,44 @@ public class SignUpActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        signInButton = findViewById(R.id.btn_google_sign_in);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        mGoogleSignInButton = findViewById(R.id.btn_google_sign_in);
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 googleSignIn();
             }
         });
 
-
-        Button btn_signUp = findViewById(R.id.btn_email_signUp);
-        btn_signUp.setOnClickListener(new View.OnClickListener() {
+        mSignUpButton = findViewById(R.id.btn_email_signUp);
+        mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emailSignUp();
+                signUp();
             }
         });
     }
 
-    //google에서 제공하는 인증 화면으로 넘어감
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class); // GoogleSignInAccount는 구글 계정 정보를 담고 있음 (이메일 주소, 프로필 등..)
+                firebaseAuthWithGoogle(account); // 로그인 결과값을 출력하라는 메소드
+            } catch (ApiException e) {
+                Log.w(TAG, "Google sign in failed", e);
+            }
+        }
+    }
+
     private void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-
-    //E-mail 회원가입
-    private void emailSignUp() {
+    private void signUp() {
         String email = ((EditText)findViewById(R.id.et_email)).getText().toString();
         String password = ((EditText)findViewById(R.id.et_password)).getText().toString();
         String passwordCheck = ((EditText)findViewById(R.id.et_passwordCheck)).getText().toString();
@@ -87,18 +100,14 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
                                     Toast.makeText(getApplicationContext(), "회원가입을 성공하였습니다.", Toast.LENGTH_SHORT).show();
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    updateUI(user);
+                                    startActivity(new Intent(getApplicationContext(), UserInfoActivity.class));
+                                    finish();
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     if(task.getException()!=null){
                                         Toast.makeText(getApplicationContext(), task.getException().toString(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
-
-                                // ...
                             }
                         });
             } else  {
@@ -107,30 +116,8 @@ public class SignUpActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "이메일 또는 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    // 구글 로그인 인증을 요청했을 때
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class); // GoogleSignInAccount는 구글 계정 정보를 담고 있음 (이메일 주소, 프로필 등..)
-                firebaseAuthWithGoogle(account); // 로그인 결과값을 출력하라는 메소드
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-                // ...
-            }
-        }
-    }
-
-    //사용자가 정상적으로 로그인하면 GoogleSignInAccount 객체에서 ID 토큰을 가져와서 Firebase 사용자 인증 정보로 교환하고 해당 정보를 사용해 Firebase 인증을 받습니다.
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
@@ -139,29 +126,14 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        // if sign in is successful
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            //Toast.makeText(getApplicationContext(),"로그인 성공",Toast.LENGTH_SHORT).show();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            startActivity(new Intent(getApplicationContext(), UserInfoActivity.class));
+                            finish();
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            //Toast.makeText(getApplicationContext(),"로그인 실패",Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
-    }
-
-    private void updateUI(FirebaseUser user) { //update ui code here
-        if (user != null) {
-            Intent intent = new Intent(this, UserInfoActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 }

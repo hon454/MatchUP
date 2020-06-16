@@ -1,5 +1,7 @@
 package com.hon454.matchup;
 
+import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,8 +19,8 @@ public class SplashActivity extends BaseActivity {
     private static final String TAG = "SplashActivity";
     private static final int DELAY_MILLIS = 1000;
 
-    private FirebaseAuth mAuth;
     private FirebaseUser mCurrentUser;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,10 +42,13 @@ public class SplashActivity extends BaseActivity {
                     if(dataSnapshot.getValue() == null) {
                         mCurrentUser.delete();
                         mCurrentUser = null;
-                        startLoginActivity();
+                        Log.e(TAG, "Current User doesn't have matching user data");
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
                         return;
                     }
-                    startMainActivity();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                     finish();
                 }
 

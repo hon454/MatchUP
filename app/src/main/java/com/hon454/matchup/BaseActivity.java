@@ -41,19 +41,4 @@ public class BaseActivity extends AppCompatActivity {
     protected DatabaseReference getUserDatabaseReference() {
         return FirebaseDatabase.getInstance().getReference().child("users");
     }
-
-    protected void startSignUpActivity() {
-        Intent intent = new Intent(this, SignUpActivity.class);
-        startActivity(intent);
-    }
-
-    protected void startMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    protected void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
 }

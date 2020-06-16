@@ -46,7 +46,8 @@ public class LoginActivity extends BaseActivity {
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSignUpActivity();
+                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -61,7 +62,8 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                startMainActivity();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
                                 finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
