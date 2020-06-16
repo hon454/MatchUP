@@ -39,7 +39,9 @@ import com.hon454.matchup.Database.Comment;
 import com.hon454.matchup.Database.Post;
 import com.hon454.matchup.Database.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PostDetailActivity extends BaseActivity {
@@ -209,6 +211,9 @@ public class PostDetailActivity extends BaseActivity {
 
                 mAuthorView.setText(mPost.authorName);
                 mTitleView.setText(mPost.title);
+                SimpleDateFormat dayTime = new SimpleDateFormat("dd일 hh:mm:ss");
+                String curTime = dayTime.format(new Date(mPost.createdDateTime));
+                mCountdownView.setText(curTime);
 //                mCountdownView.setText();
 
                 LoadThumbnailWithGlide(mPost.thumbnailDownloadUrl);
