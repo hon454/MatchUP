@@ -264,7 +264,7 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPost = dataSnapshot.getValue(Post.class);
-                if(mPost.leftVoterUidList.contains(getUid()) || mPost.leftVoterUidList.contains(getUid())) {
+                if(mPost.leftVoterUidList.contains(getUid()) || mPost.rightVoterUidList.contains(getUid())) {
                     Toast.makeText(PostDetailActivity.this, "이미 투표에 참가하셨습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     mPost.leftVoterUidList.add(getUid());
