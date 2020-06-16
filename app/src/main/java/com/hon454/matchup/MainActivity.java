@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -149,6 +151,8 @@ public class MainActivity extends BaseActivity {
                         .load(user.getProfileUri())
                         .centerCrop()
                         .into(mDrawerProfile);
+                mDrawerProfile.setBackground(new ShapeDrawable(new OvalShape()));
+                mDrawerProfile.setClipToOutline(true);
             }
 
             @Override
