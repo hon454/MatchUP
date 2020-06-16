@@ -58,6 +58,7 @@ public class PostDetailActivity extends BaseActivity {
     private TextView mCountdownView;
 
     private ImageView mThumbnailView;
+    private ImageView mProfileView;
 
     private TextView mLeftOptionModifierView;
     private TextView mLeftOptionTitleView;
@@ -111,6 +112,7 @@ public class PostDetailActivity extends BaseActivity {
         mCountdownView = findViewById(R.id.postCountdown);
 
         mThumbnailView = findViewById(R.id.postThumbnail);
+        mProfileView = findViewById(R.id.postAuthorProfile);
 
         mLeftOptionModifierView  = findViewById(R.id.postLeftOptionModifier);
         mLeftOptionTitleView = findViewById(R.id.postLeftOptionTitle);
@@ -184,6 +186,26 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPost = dataSnapshot.getValue(Post.class);
+
+                DatabaseReference mUserReference = FirebaseDatabase.getInstance().getReference().child("users").child(mPost.authorUid);
+                ValueEventListener userListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User mUser = dataSnapshot.getValue(User.class);
+                        Glide.with(getApplicationContext())
+                                .load(mUser.getProfileUri())
+                                .centerCrop()
+                                .into(mProfileView);
+                        mProfileView.setBackground(new ShapeDrawable(new OvalShape()));
+                        mProfileView.setClipToOutline(true);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+                mUserReference.addValueEventListener(userListener);
 
                 mAuthorView.setText(mPost.authorName);
                 mTitleView.setText(mPost.title);
