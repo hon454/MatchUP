@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -39,7 +40,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private Uri filePath;
-    ImageButton btn_profile;
+    ImageView btn_profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class UserInfoActivity extends AppCompatActivity {
         });
 
         //앨범에서 profile 설정하기
-        btn_profile = (ImageButton)findViewById(R.id.imageButton_profile);
+        btn_profile = (ImageView)findViewById(R.id.imageButton_profile);
         btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

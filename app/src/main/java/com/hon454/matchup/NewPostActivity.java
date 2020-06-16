@@ -118,6 +118,7 @@ public class NewPostActivity extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), thumbnailUri);
                 mThumbnailImageButton.setImageBitmap(bitmap);
+                mThumbnailImageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
             } catch (IOException e) {
                 e.printStackTrace();
             }

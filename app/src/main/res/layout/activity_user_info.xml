@@ -43,12 +43,12 @@
                 android:text="디테일한 데이터 수집을 위해 \n아래의 정보들을 입력해 주세요."
                 android:textSize="16sp" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/imageButton_profile"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginTop="15dp"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@drawable/default_profile" />
 
             <TextView
