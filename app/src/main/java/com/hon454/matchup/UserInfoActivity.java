@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,10 @@ public class UserInfoActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private Uri filePath;
+
+    private EditText nicknameField;
+    private EditText birthYearField;
+
     ImageView btn_profile;
 
     @Override
@@ -51,10 +56,38 @@ public class UserInfoActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
 
+        nicknameField = findViewById(R.id.et_nickname);
+        birthYearField = findViewById(R.id.et_birthYear);
+
         Button btn_save = (Button)findViewById(R.id.btn_save_info);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(filePath == null) {
+                    Toast.makeText(getApplicationContext(), "프로필 이미지를 선택하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(nicknameField.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "닉네임을 입력하여 주십시오.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String birthYearText = birthYearField.getText().toString();
+                int birthYear = 0;
+                try {
+                    birthYear = Integer.parseInt(birthYearText);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getApplicationContext(), "올바르지 않은 출생년도를 입력하였습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                final int CURRENT_YEAR = Calendar.getInstance().get(Calendar.YEAR);
+                if(birthYear < 1900 || 2020 < CURRENT_YEAR) {
+                    Toast.makeText(getApplicationContext(), "올바르지 않은 출생년도를 입력하였습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 uploadProfile();
                 userInfoSave();
             }
@@ -195,7 +228,8 @@ public class UserInfoActivity extends AppCompatActivity {
                 user.setProfileUri(uri.toString());
                 mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user);
 
-                goToMainActivity();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -203,10 +237,5 @@ public class UserInfoActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void goToMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
     }
 }

@@ -733,7 +733,7 @@ public class PostDetailActivity extends BaseActivity {
             holder.bodyView.setText(comment.text);
 
             mUserReference = FirebaseDatabase.getInstance().getReference().child("users").child(comment.authorUid);
-            ValueEventListener userLinstener = new ValueEventListener() {
+            ValueEventListener userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
@@ -743,6 +743,15 @@ public class PostDetailActivity extends BaseActivity {
                             .into(holder.commentView);
                     holder.commentView.setBackground(new ShapeDrawable(new OvalShape()));
                     holder.commentView.setClipToOutline(true);
+
+                    PostDetailActivity postDetailActivity = (PostDetailActivity) mContext;
+                    if(postDetailActivity.mPost.leftVoterUidList.contains(user.getUid())) {
+                        holder.authorView.setTextColor(mContext.getColor(R.color.pros));
+                    } else if(postDetailActivity.mPost.rightVoterUidList.contains(user.getUid())) {
+                        holder.authorView.setTextColor(mContext.getColor(R.color.cons));
+                    } else {
+                        holder.authorView.setTextColor(mContext.getColor(R.color.black));
+                    }
                 }
 
                 @Override
@@ -750,11 +759,10 @@ public class PostDetailActivity extends BaseActivity {
 
                 }
             };
-            mUserReference.addValueEventListener(userLinstener);
+            mUserReference.addValueEventListener(userListener);
 
 
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Log.d(TAG, comment.authorUid + "/" + uid);
             if(comment.authorUid.equals(uid)) {
                 holder.removeCommentButton.setVisibility(View.VISIBLE);
                 holder.removeCommentButton.setOnClickListener(new View.OnClickListener() {
