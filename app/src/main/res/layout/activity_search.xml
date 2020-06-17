@@ -30,7 +30,8 @@
             android:layout_weight="1"
             android:imeOptions="actionSearch"
             android:layout_marginEnd="12dp"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:hint="MatchUp 검색"/>
 
         <ImageView
             android:id="@+id/btn_search"
