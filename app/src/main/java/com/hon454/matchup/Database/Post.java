@@ -98,4 +98,12 @@ public class Post {
     public String getRightTitle() {
         return rightTitle;
     }
+
+    public String getLeftModifier() {
+        return leftModifier;
+    }
+
+    public String getRightModifier() {
+        return rightModifier;
+    }
 }
